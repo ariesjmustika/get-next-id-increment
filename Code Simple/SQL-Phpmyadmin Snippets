@@ -1,0 +1,66 @@
+====== ADDING TRIGGER IN PHPMYADMIN   ========
+
+// Membuat Function Triger absensi masuk dan absensi pulang
+DELIMITER $$
+
+CREATE TRIGGER after_checkinout
+AFTER INSERT
+ON checkinout FOR EACH ROW
+BEGIN
+    IF NEW.checktype=0 THEN
+        INSERT INTO absensi_ho(id_absen, id_user, date_absen, in_time, in_ket, mesin, ket)
+        VALUES(new.id, NEW.userid, CURDATE(), NEW.checktime, 'hadir', 1, 'WFO');
+    ELSEIF NEW.checktype=1 THEN
+    UPDATE absensi_ho SET gohome_time=NEW.checktime, gohome_ket='pulang' WHERE id_user = NEW.userid AND DATE(date_absen)=CURDATE();
+    END IF;
+END$$
+
+DELIMITER ;
+
+// sample absensi masuk
+ INSERT INTO checkinout(userid, checktime, checktype, verifycode, SN, sensorid, Reserved)
+        VALUES(119, '2022-12-26 08:54:12', 0, 9, 'CLKM205060023', 1, 0);
+// sample absensi keluar
+INSERT INTO checkinout(userid, checktime, checktype, verifycode, SN, sensorid, Reserved)
+    VALUES(119, '2022-12-26 17:54:12', 1, 9, 'CLKM205060023', 1, 0);
+
+//hapus trigger
+DROP TRIGGER after_checkinout
+
+//menampilkan trigger
+SHOW TRIGGERS
+
+
+============ SCHEDULER ==================
+//melihat status event_scheduler (Aktif/tidak)
+SHOW VARIABLES LIKE 'event_scheduler'
+
+//mengaktifkan event_scheduler
+SET GLOBAL event_scheduler=1
+
+// Scheduler untuk sekali 
+CREATE EVENT aries_test
+ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
+ON COMPLETION PRESERVE
+DO
+INSERT INTO data_center(name)
+VALUES ('aries');
+
+// Scheduler untuk setiap menit
+CREATE EVENT every_one_minute
+ON SCHEDULE EVERY 1 MINUTE
+STARTS CURRENT_TIMESTAMP
+ENDS CURRENT_TIMESTAMP + INTERVAL 10 MINUTE
+DO
+INSERT INTO data_center(name)
+VALUES ('aries');
+
+//menampikan scheduler yang masih aktif
+SHOW EVENTS FROM test;
+
+
+
+
+
+
+    
