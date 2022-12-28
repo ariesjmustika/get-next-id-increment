@@ -1,0 +1,10 @@
+// menampilkan data agronomi personalia 
+SELECT m.afd,
+ IFNULL ((SELECT SUM(luastanam)  FROM masterblok WHERE tahuntanam >= 2018 AND afd=m.afd),0 ) AS tbm_ha,
+ CONCAT('0') AS tbm_pkk, 
+ IFNULL ((SELECT SUM(luastanam)  FROM masterblok WHERE tahuntanam < 2018 AND afd=m.afd),0 ) AS tm_ha,
+ CONCAT('0') AS tm_pkk,
+ IFNULL ((SELECT SUM(luastanam)  FROM masterblok  WHERE afd=m.afd),0 ) AS gab_ha,
+ CONCAT('0') AS gab_pkk
+FROM masterblok m
+GROUP BY afd
