@@ -23,7 +23,9 @@ ELSE 'pulang'
 END as gohome_ket, CONCAT('') AS gohome_ip, CONCAT('') AS gohome_loc, CONCAT('1') AS mesin, CONCAT('WFO') AS ket
 
 FROM checkinout c
-WHERE DATE(c.checktime)='2022-11-28' AND c.checktype=0  ORDER BY in_time ASC
+WHERE DATE(c.checktime)='2022-11-28' AND c.checktype=0 
+GROUP BY c.userid
+ORDER BY in_time ASC
 
 
 // UNTUK KASUS SUBQUERY error (2022-11-28 ganti sesuai tanggal yang di perlukan untuk di posting ke absensi_ho)
