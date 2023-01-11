@@ -74,3 +74,19 @@ WHERE DATE(c.checktime)='2022-11-28' AND c.checktype=0  ORDER BY in_time ASC
 TRIGGER udah di update ke absensi_ho (bukan ke absensi_ho_testing lagi)
 
 
+
+// UNTUK INSERT data absensi yang hanya absen pulang aja
+INSERT INTO absensi_ho (id_user, date_absen, in_time, in_ket, in_ip, in_loc, rest_time, rest_ket, rest_ip, rest_loc, done_rest_time, done_rest_ket, done_rest_ip, done_rest_loc, gohome_time, gohome_ket, gohome_ip, gohome_loc, mesin, ket)
+SELECT c.userid as id_user, DATE(c.checktime) AS date_absen, CONCAT('0000-00-00 00:00:00') AS in_time,
+CONCAT('hadir') AS in_ket, CONCAT('') AS in_ip, CONCAT('') AS in_loc, CONCAT('0000-00-00 00:00:00') AS rest_time, CONCAT('') AS rest_ket, CONCAT('') AS rest_ip, 
+CONCAT('') AS rest_loc, CONCAT('0000-00-00 00:00:00') AS done_time,  CONCAT('') AS done_rest_ket, CONCAT('') AS done_rest_ip,CONCAT('') AS done_rest_loc,
+c.checktime AS gohome_time,
+CONCAT('pulang') as gohome_ket, CONCAT('') AS gohome_ip, CONCAT('') AS gohome_loc, CONCAT('1') AS mesin, CONCAT('WFO') AS ket
+
+FROM checkinout c
+WHERE DATE(c.checktime)='2023-01-10' AND c.checktype=1 AND c.userid IN (52, 118, 116)
+
+
+
+
+
