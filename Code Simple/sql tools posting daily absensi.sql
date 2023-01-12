@@ -84,7 +84,7 @@ c.checktime AS gohome_time,
 CONCAT('pulang') as gohome_ket, CONCAT('') AS gohome_ip, CONCAT('') AS gohome_loc, CONCAT('1') AS mesin, CONCAT('WFO') AS ket
 
 FROM checkinout c
-WHERE DATE(c.checktime)='2023-01-10' AND c.checktype=1 AND c.userid IN (52, 118, 116)
+WHERE DATE(c.checktime)='2023-01-10' AND c.checktype=1 AND c.userid IN (34, 118,60)
 
 
 
