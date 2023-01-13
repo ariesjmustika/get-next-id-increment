@@ -63,4 +63,40 @@ SHOW EVENTS FROM test;
 
 
 
+
+/// TESTING TESTING FIX INI 
+DELIMITER $$
+
+CREATE TRIGGER after_checkinout
+AFTER INSERT
+ON checkinout FOR EACH ROW
+BEGIN
+DECLARE count_user tinyint(3);
+	 SELECT COUNT(*) 
+        INTO count_user FROM absensi_ho 
+        WHERE id_user=NEW.userid AND DATE(date_absen)=CURDATE();
+    
+    IF count_user = 0 THEN
+        IF NEW.checktype=0 THEN
+            INSERT INTO absensi_ho(id_absen, id_user, date_absen, in_time, in_ket, mesin, ket)
+            VALUES(new.id, NEW.userid, CURDATE(), NEW.checktime, 'hadir', 1, 'WFO');
+        ELSEIF NEW.checktype=1 THEN
+        	INSERT INTO absensi_ho(id_absen, id_user, date_absen, gohome_time, gohome_ket, mesin, ket)
+            VALUES(new.id, NEW.userid, CURDATE(), NEW.checktime, 'pulang', 1, 'WFO');
+        END IF;   
+        
+    ELSE 
+        IF NEW.checktype=0 THEN
+           UPDATE absensi_ho SET in_time=NEW.checktime, in_ket='pulang' WHERE id_user = NEW.userid AND DATE(date_absen)=CURDATE();
+        ELSEIF NEW.checktype=1 THEN
+        	UPDATE absensi_ho SET gohome_time=NEW.checktime, gohome_ket='pulang' WHERE id_user = NEW.userid AND DATE(date_absen)=CURDATE();
+        END IF;   
+    END IF;
+    
+END$$
+
+DELIMITER ;
+
+
+
     
