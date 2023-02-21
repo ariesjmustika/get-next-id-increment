@@ -90,3 +90,62 @@ WHERE DATE(c.checktime)='2023-01-10' AND c.checktype=1 AND c.userid IN (34, 118,
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------ 21 FEBRUARI 2023
+--- Nge cek yang absen hadir sama pulang aja
+SELECT userid, checktime, checktype FROM `checkinout` WHERE DATE(checktime)='2023-02-21' GROUP BY userid
+ORDER BY checktype  ASC, userid
+
+==== kodingan untuk yang ada hadirnya
+
+INSERT INTO absensi_ho (id_user, date_absen, in_time, in_ket, in_ip, in_loc, rest_time, rest_ket, rest_ip, rest_loc, done_rest_time, done_rest_ket, done_rest_ip, done_rest_loc, gohome_time, gohome_ket, gohome_ip, gohome_loc, mesin, ket)
+SELECT c.userid as id_user, DATE(c.checktime) AS date_absen, c.checktime AS in_time,
+CONCAT('hadir') AS in_ket, CONCAT('') AS in_ip, CONCAT('') AS in_loc, CONCAT('0000-00-00 00:00:00') AS rest_time, CONCAT('') AS rest_ket, CONCAT('') AS rest_ip, 
+CONCAT('') AS rest_loc, CONCAT('0000-00-00 00:00:00') AS done_time,  CONCAT('') AS done_rest_ket, CONCAT('') AS done_rest_ip,CONCAT('') AS done_rest_loc,
+(SELECT cc.checktime FROM checkinout cc  WHERE cc.userid=c.userid AND DATE(cc.checktime)='2023-02-21' AND cc.checktype=1 ORDER BY cc.id DESC LIMIT 1) AS gohome_time,
+CASE 
+WHEN (SELECT cc.checktime FROM checkinout cc  WHERE cc.userid=c.userid AND DATE(cc.checktime)='2023-02-21' AND cc.checktype=1 ORDER BY cc.id DESC LIMIT 1) IS NULL THEN ''
+ELSE 'pulang' 
+END as gohome_ket, CONCAT('') AS gohome_ip, CONCAT('') AS gohome_loc, CONCAT('1') AS mesin, CONCAT('WFO') AS ket
+
+FROM checkinout c
+WHERE DATE(c.checktime)='2023-02-21' AND c.checktype=0 
+GROUP BY c.userid
+ ORDER BY in_time ASC
+
+==== kodingan untuk yang pulang doang
+
+
+INSERT INTO absensi_ho (id_user, date_absen, in_time, in_ket, in_ip, in_loc, rest_time, rest_ket, rest_ip, rest_loc, done_rest_time, done_rest_ket, done_rest_ip, done_rest_loc, gohome_time, gohome_ket, gohome_ip, gohome_loc, mesin, ket)
+SELECT c.userid as id_user, DATE(c.checktime) AS date_absen, CONCAT('0000-00-00 00:00:00') AS in_time,
+CONCAT('hadir') AS in_ket, CONCAT('') AS in_ip, CONCAT('') AS in_loc, CONCAT('0000-00-00 00:00:00') AS rest_time, CONCAT('') AS rest_ket, CONCAT('') AS rest_ip, 
+CONCAT('') AS rest_loc, CONCAT('0000-00-00 00:00:00') AS done_time,  CONCAT('') AS done_rest_ket, CONCAT('') AS done_rest_ip,CONCAT('') AS done_rest_loc,
+c.checktime AS gohome_time,
+CONCAT('pulang') as gohome_ket, CONCAT('') AS gohome_ip, CONCAT('') AS gohome_loc, CONCAT('1') AS mesin, CONCAT('WFO') AS ket
+
+FROM checkinout c
+WHERE DATE(c.checktime)='2023-02-21' AND c.checktype=1 AND c.userid IN (19, 29, 33, 34, 59,68,71,82,95,114,119)
+group by c.userid
+
+
+
+
+
+
+
+
+
